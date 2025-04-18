@@ -1,8 +1,21 @@
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("upload_form")
+    const videoInput = document.getElementById("video_input")
+    const videoPreview = document.getElementById("video_preview")
+
+    videoInput.addEventListener("change", () => {
+        const file = videoInput.files[0];
+        if (!file) return;
+
+        const url = URL.createObjectURL(file);
+        videoPreview.src = url;
+        videoPreview.load();
+        videoPreview.play();
+    })
+
     form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        uploadVideo(form);
+        e.preventDefault()
+        uploadVideo(form)
     });
 })
 
