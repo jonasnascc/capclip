@@ -19,7 +19,7 @@
 
 .plyr_progress {
     height: 100%;
-    width: 50%;
+    width: 0px;
     background-color: #284DE5;
     border-radius: 10px 10px 10px 0px;
     /* border-radius: inherit; */
