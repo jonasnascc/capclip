@@ -40,7 +40,7 @@ app.post('/upload', upload.single('video_file'), async (req, res) => {
         const channel = await client.channels.fetch(process.env.CHANNEL_ID);
 
         await channel.send({
-            content: description || '',
+            content: description || '\n',
             files: [{ attachment: videoPath, name: 'video.mp4' }]
         });
 

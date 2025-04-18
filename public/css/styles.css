@@ -1,0 +1,101 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #480A0A;
+    width: 100%;
+    height: 100vh;
+    margin: 0;
+}
+
+.hidden {
+    display: none;
+}
+
+#upload_form {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    gap: 1.44vh;
+    width: calc(63.5vh * 16/9);
+    max-width: 100vw;
+}
+
+#form_control {
+    width: 100%;
+}
+
+.video_input_div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap:1.44vh;
+}
+
+.videoPlayer {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 63.5vh;
+    max-height: calc(100vw * 9/16);
+    background-color: black;
+    width: 100%;
+}
+
+#video_preview {
+    width: 100%;
+    height: auto;
+    max-height: 63.5vh;
+}
+
+#submit_div {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: end;
+    height: 4.6vh;
+    gap: .5vw;
+}
+
+.code_input_div {
+    display: flex;
+    align-items: center;
+    gap: 1vw;
+}
+
+.code_input_div label {
+    color: white;
+}
+
+#code {
+    all: unset;
+    background-color: white;
+    width: 11.80vw;
+    height: 100%;
+}
+
+#submit_button {
+    all: unset;
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 1vw;
+    background-color: #284DE5;
+    color: white;
+    font-weight: 500;
+}
+
+.videoPlayer , #player_bar, #video_preview, #code, #submit_button{
+    border-radius: 10px;
+}

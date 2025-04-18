@@ -1,22 +1,26 @@
-<h1>Hello world!</h1>
 <form id="upload_form">
-    <div id="form_control">
-        <label for="code">Seu código: </label>
-        <input id="code" name="code" type="text" required/>
-    </div>
-    <div id="form_control">
-        <label for="video_input">Seu vídeo: </label>
-        <input id="video_input" name="video_file" type="file" accept="video/*" required/>
-        <div class="preview_container">
-            <video id="video_preview" style="max-width: 200px;" controls/>
+    <div id="form_control" class="video_input_div">
+        <div class="videoPlayer">
+            <div class="dropZone">
+                <span id="dropText">Clique ou arraste um ficheiro aqui</span>
+
+                <input id="video_input" name="video_file" type="file" accept="video/*" required/>
+            </div>
+            
+            <video id="video_preview" class="hidden" controls></video>
         </div>
+        <div id="player_bar"></div>
     </div>
-    <div id="form_control">
+    <div id="form_control" style="display:none;">
         <label for="description">Descrição</label>
         <textarea id="description" name="description"></textarea>
     </div>
     <div id="submit_div">
+        <div class="code_input_div">
+            <label for="code">Digite seu código: </label>
+            <input id="code" name="code" type="text" required/>
+        </div>
         <div id="send_status"></div>
-        <button type="submit">Enviar</button>
+        <button type="submit" id="submit_button">MENSAGEM + ENVIAR </button>
     </div>
 </form>

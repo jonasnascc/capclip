@@ -1,0 +1,52 @@
+#player_bar {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 6.83vh;
+    width: 100%;
+    background-color: #210707;
+    border-radius: 10px;
+}
+
+.plyr_bar {
+    position: relative;
+    max-height: 1.6vh;
+    background-color: #D9D9D9;
+    flex: 1;
+    border-radius: 10px 10px 0 0;
+    overflow: hidden;
+}
+
+.plyr_progress {
+    height: 100%;
+    width: 50%;
+    background-color: #284DE5;
+    border-radius: 10px 10px 10px 0px;
+    /* border-radius: inherit; */
+}
+
+#plyr_buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    max-height: calc(100% - 1.6vh);
+}
+
+#play_pause_btn {
+    all: unset;
+    background-color: white;
+    color: #210707;
+    width:4vh;
+    height:4vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+#play_pause_btn .bi {
+    font-size: 3.8vh;
+    display: flex;
+}
