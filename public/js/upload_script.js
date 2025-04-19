@@ -2,6 +2,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("upload_form")
     const videoInput = document.getElementById("video_input")
     const videoPreview = document.getElementById("video_preview")
+    const submitButton = document.getElementById("submit_button")
+    const msgPopupButton = document.getElementById("msg_popup_button")
+
+    submitButton.disabled = true
+    msgPopupButton.disabled = true
 
     videoInput.addEventListener("change", () => {
         const file = videoInput.files[0];

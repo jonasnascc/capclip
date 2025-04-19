@@ -1,0 +1,46 @@
+#msg_popup {
+    position: absolute;
+    height: 36.8vh;
+    width: 30vw;
+    min-width: 580px;
+    bottom: 5vh;
+    border-radius: 6px;
+    display: flex;
+    opacity: 0;
+    transition: visibility .1s ease-out, opacity .1s ease-in;
+}
+
+#msg_popup_body {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 1vw;
+    gap: 1vh;
+    width: 100%;
+    background-color: white;
+    border-radius: 10px;
+}
+
+#msg_popup_actions {
+    display: flex;
+    flex-direction: column;
+    height: 4.6vh;
+    justify-content: end;
+}
+
+#description {
+    flex: 1;
+}
+
+#msg_popup_button {
+    display: flex;
+    gap: .5vw;
+}
+
+@media (max-width:580px) {
+    #msg_popup {
+        width: 100vw;
+        min-width: auto;
+    }
+}
+

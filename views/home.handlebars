@@ -11,16 +11,20 @@
         </div>
         <div id="player_bar"></div>
     </div>
-    <div id="form_control" style="display:none;">
-        <label for="description">Descrição</label>
-        <textarea id="description" name="description"></textarea>
-    </div>
     <div id="submit_div">
         <div class="code_input_div">
             <label for="code">Digite seu código: </label>
             <input id="code" name="code" type="text" required/>
         </div>
-        <div id="send_status"></div>
-        <button type="submit" id="submit_button">MENSAGEM + ENVIAR </button>
+        <div id="msg_popup" style="visibility: hidden;">
+            <div id="msg_popup_body">
+                <label for="description">Descrição</label>
+                <textarea id="description" name="description"></textarea>
+                <div id="msg_popup_actions">
+                    <button type="button" id="submit_button">ENVIAR</button>
+                </div>
+            </div>
+        </div>
+        <button type="button" id="msg_popup_button">DESCRIÇÃO + ENVIAR</button>
     </div>
 </form>

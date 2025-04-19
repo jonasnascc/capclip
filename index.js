@@ -10,13 +10,13 @@ const { Client } = require('discord.js-selfbot-v13');
 const port = 3000;
 const app = express();
 
-const client = new Client();
+// const client = new Client();
 
-client.on('ready', async () => {
-    console.log(`${client.user.username} is now running!`);
-});
+// client.on('ready', async () => {
+//     console.log(`${client.user.username} is now running!`);
+// });
 
-client.login(process.env.TOKEN);
+// client.login(process.env.TOKEN);
 
 app.engine('handlebars', exphbs.engine());
 app.set('view engine', 'handlebars');
