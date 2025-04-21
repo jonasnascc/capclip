@@ -1,9 +1,13 @@
+let validSubmit = false;
+
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("upload_form")
     const videoInput = document.getElementById("video_input")
     const videoPreview = document.getElementById("video_preview")
     const submitButton = document.getElementById("submit_button")
     const msgPopupButton = document.getElementById("msg_popup_button")
+
+    const codeInput = document.getElementById("code")
 
     submitButton.disabled = true
     msgPopupButton.disabled = true
@@ -15,10 +19,18 @@ document.addEventListener("DOMContentLoaded", () => {
             return
         };
 
+        setValidSubmit(!!codeInput.value)
+
         const url = URL.createObjectURL(file);
         videoPreview.src = url;
         videoPreview.load();
         videoPreview.play();
+    })
+
+    codeInput.addEventListener("input", (e) => {
+        const val = e.target.value
+
+        setValidSubmit(!!val && !previewEmpty)
     })
 
     form.addEventListener('submit', async (e) => {
@@ -26,6 +38,20 @@ document.addEventListener("DOMContentLoaded", () => {
         uploadVideo(form)
     });
 })
+
+const setValidSubmit = (state) => {
+    validSubmit = state
+
+    const submitButton = document.getElementById("submit_button")
+    const msgPopupButton = document.getElementById("msg_popup_button")
+
+    submitButton.disabled = !state
+    msgPopupButton.disabled = !state
+
+    console.log(state)
+
+    if(!state) setExpandMsgPopup(false)
+}
 
 async function uploadVideo(form) {
     const status = document.getElementById("send_status")
