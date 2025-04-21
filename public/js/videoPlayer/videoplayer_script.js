@@ -1,6 +1,7 @@
 const playIcon = `<i class="bi bi-play-fill"></i>`
 const pauseIcon = `<i class="bi bi-pause-fill"></i>`
 const editIcon = `<i class="bi bi-pencil-square"></i>`
+const closeIcon = `<i class="bi bi-x-lg"></i>`
 
 let mouseX;
 let mouseY;
@@ -14,13 +15,15 @@ let start;
 let end;
 
 let editMode = false;
-let editDiv = null;
 
 let previewEmpty = true
+
+let isOverlayVisible = false
 
 document.addEventListener("DOMContentLoaded",() => {
     const preview = document.getElementById("video_preview")
 
+    const videoPlayer = document.querySelector(".videoPlayer")
     const playerBarContainer = document.getElementById("player_bar")
     const bar = document.createElement("div")
     const progress = document.createElement("div")
@@ -30,6 +33,9 @@ document.addEventListener("DOMContentLoaded",() => {
     const timeDiv = document.createElement("div")
     const rightButtonsDiv = document.createElement("div")
     const editButton = document.createElement("button")
+
+    let editDiv = null;
+    let videoOverlay = null;
 
     playerBarContainer.appendChild(bar)
     bar.className = "plyr_bar"
@@ -92,6 +98,50 @@ document.addEventListener("DOMContentLoaded",() => {
 
         timeDiv.textContent = `${secsToHours(Math.floor(currentTime - start))}/${secsToHours(Math.floor(end-start))}`
     })
+
+    videoPlayer.addEventListener("mouseenter", () => {
+        if(previewEmpty || isOverlayVisible) {
+            return;
+        }
+        if(videoOverlay) videoOverlay.remove()
+
+        const overlay = document.createElement("div")
+        const overlayHeader = document.createElement("div")
+        const closeVideoButton = document.createElement("button")
+
+        videoPlayer.appendChild(overlay)
+        overlay.id = "video_overlay"
+
+        overlay.appendChild(overlayHeader)
+        overlayHeader.id = "overlay_header"
+
+        overlayHeader.appendChild(closeVideoButton)
+        closeVideoButton.id = "close_video_btn"
+        closeVideoButton.type = "button"
+        closeVideoButton.innerHTML = closeIcon
+        closeVideoButton.addEventListener("click", () => {
+            const dropZone = document.querySelector('.dropZone');
+            preview.removeAttribute("src")
+            preview.classList.add("hidden")
+            preview.innerHTML = ""
+            preview.load()
+            previewEmpty = true
+            dropZone.classList.remove("hidden")
+            videoOverlay.remove()
+            videoOverlay = null
+        })
+
+        videoOverlay = overlay
+        isOverlayVisible = true
+    })
+
+    videoPlayer.addEventListener("mouseleave", () => {
+        if(videoOverlay){
+            videoOverlay.remove()
+            videoOverlay = null
+        }
+        isOverlayVisible = false
+    })  
 
     bar.addEventListener("mousedown", () => {
         const {x, width} = bar.getBoundingClientRect() 

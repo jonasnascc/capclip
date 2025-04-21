@@ -20,6 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 
         setValidSubmit(!!codeInput.value)
+        previewEmpty = false
 
         const url = URL.createObjectURL(file);
         videoPreview.src = url;
