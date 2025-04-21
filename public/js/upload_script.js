@@ -10,7 +10,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     videoInput.addEventListener("change", () => {
         const file = videoInput.files[0];
-        if (!file) return;
+        if (!file) {
+            previewEmpty = true
+            return
+        };
 
         const url = URL.createObjectURL(file);
         videoPreview.src = url;

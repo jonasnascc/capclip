@@ -7,6 +7,17 @@ let mouseY;
 
 let clickingBar = false;
 
+let grabbingStartCursor = false;
+let grabbingEndCursor = false;
+
+let start;
+let end;
+
+let editMode = false;
+let editDiv = null;
+
+let previewEmpty = true
+
 document.addEventListener("DOMContentLoaded",() => {
     const preview = document.getElementById("video_preview")
 
@@ -60,8 +71,12 @@ document.addEventListener("DOMContentLoaded",() => {
     // editButton.innerHTML = editIcon
 
     preview.addEventListener("loadedmetadata", () => {
+        previewEmpty = false
         timeDiv.textContent = `${secsToHours(0)}/${secsToHours(Math.floor(preview.duration))}`
         playPauseButton.innerHTML = preview.paused ? playIcon : pauseIcon
+
+        start = 0;
+        end = preview.duration;
     })
 
     preview.addEventListener("timeupdate", () => {
@@ -70,20 +85,23 @@ document.addEventListener("DOMContentLoaded",() => {
         const windowWidth = window.innerWidth;
         playPauseButton.innerHTML = preview.paused ? playIcon : pauseIcon
 
-        const resultWidth = (currentTime/ duration) * width
+        if(currentTime < start || currentTime > end) preview.currentTime = start;
+
+        const resultWidth = ((currentTime-start)/ duration) * width
         progress.style.width = `${resultWidth*100/windowWidth}vw`
 
-        timeDiv.textContent = `${secsToHours(Math.floor(preview.currentTime))}/${secsToHours(Math.floor(preview.duration))}`
+        timeDiv.textContent = `${secsToHours(Math.floor(currentTime - start))}/${secsToHours(Math.floor(end-start))}`
     })
 
     bar.addEventListener("mousedown", () => {
         const {x, width} = bar.getBoundingClientRect() 
         clickingBar = true
         
+        if(grabbingStartCursor || grabbingEndCursor) return
         preview.currentTime = ((mouseX - x)/width) * preview.duration
     })
 
-    bar.addEventListener("mouseup", () => {
+    document.addEventListener("mouseup", () => {
         clickingBar = false
     })
 
@@ -91,7 +109,7 @@ document.addEventListener("DOMContentLoaded",() => {
         mouseX = e.clientX;
         mouseY = e.clientY;
     
-        if(clickingBar) {
+        if(clickingBar && !(grabbingStartCursor || grabbingEndCursor)) {
             const {x, width} = bar.getBoundingClientRect()
             const windowWidth = window.innerWidth;
             
@@ -104,7 +122,100 @@ document.addEventListener("DOMContentLoaded",() => {
 
         }
     })
+
+    editButton.addEventListener("click", () => {
+        if(previewEmpty) return;
+        editMode = !editMode
+        
+        if(editMode) {
+            editDiv = renderEditCursors()
+            preview.currentTime = 0
+        }
+
+        else {
+            if(editDiv) editDiv.remove()
+            editDiv = null;
+        
+            start = 0
+            end = preview.duration
+            preview.currentTime = 0
+            preview.play()
+
+            clickingBar = false;
+            grabbingStartCursor = false;
+            grabbingEndCursor = false;
+
+            bar.style.padding = "0px"
+        }
+    })
 })
+
+const renderEditCursors = () => {
+    const bar = document.querySelector(".plyr_bar")
+    const editContainer = document.createElement("div")
+    const startCursor = document.createElement("div")
+    const endCursor = document.createElement("div")
+
+    bar.appendChild(editContainer)
+    editContainer.id = "edit_cursors_container"
+
+    editContainer.append(startCursor)
+    editContainer.append(endCursor)
+
+    startCursor.id = "start_cursor"
+    endCursor.id = "end_cursor"
+
+    startCursor.addEventListener("mousedown", () => grabbingStartCursor = true)
+    endCursor.addEventListener("mousedown", () => grabbingEndCursor = true)
+
+    document.addEventListener("mouseup", () => {
+        grabbingStartCursor = false
+        grabbingEndCursor = false
+    })
+
+    document.addEventListener("mousemove", (e) => {
+        const bar = document.querySelector(".plyr_bar")   
+        const preview = document.getElementById("video_preview")
+        const progress = document.querySelector(".plyr_progress")
+
+        const {x, width, left} = bar.getBoundingClientRect()
+        const {width:cursorWidth} = startCursor.getBoundingClientRect()
+        const windowWidth = window.innerWidth;
+
+        if(mouseX < x || mouseX > (x+width)) return;
+        
+        if(grabbingStartCursor) {
+            const cursorLeft = mouseX - x
+            const startVal = parseFloat((cursorLeft/width * preview.duration).toFixed(6))
+
+            if(startVal > end - 1 ) return
+
+            startCursor.style.left = `${(cursorLeft - (cursorWidth/2)) * 100/windowWidth}vw`;
+            bar.style.paddingLeft = `${cursorLeft * 100/windowWidth}vw`;
+
+            start = startVal
+            preview.currentTime = start
+        } 
+        else if (grabbingEndCursor) {
+            const cursorRight = x + width - mouseX
+            const endVal = parseFloat((preview.duration * (1 - (cursorRight/width))).toFixed(6))
+            
+            if(endVal < start + 1) return;
+
+            endCursor.style.right = `${(cursorRight - (cursorWidth/2)) * 100/windowWidth}vw`;
+            bar.style.paddingRight = `${cursorRight * 100/windowWidth}vw`;
+
+            end=endVal
+        }
+
+        if(grabbingEndCursor || grabbingStartCursor){
+            const resultWidth = ((preview.currentTime-start)/ preview.duration) * width
+            progress.style.width = `${resultWidth*100/windowWidth}vw`
+        }
+    })
+
+    return editContainer;
+}
 
 function secsToHours(segundos) {
     const hours = Math.floor(segundos / 3600);
