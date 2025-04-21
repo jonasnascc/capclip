@@ -21,6 +21,13 @@
     color: #000;
   }
 
+  .dropZone:hover {
+    background-color: #500707;
+    transition: background-color 0.8s ease;
+    color: rgb(128, 95, 95);
+
+  }
+
   .dropZone input {
     display: none;
   }
