@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded",() => {
 
     preview.addEventListener("loadedmetadata", () => {
         previewEmpty = false
-        timeDiv.textContent = `${secsToHours(0)}/${secsToHours(Math.floor(preview.duration))}`
+        timeDiv.textContent = `${secsToHours(0)}/${secsToHours(preview.duration.toFixed(3))}`
         playPauseButton.innerHTML = preview.paused ? playIcon : pauseIcon
 
         start = 0;
@@ -93,11 +93,13 @@ document.addEventListener("DOMContentLoaded",() => {
 
     const setProgressTime = (time) => {
         let resultWidth = ((time-start) * 100/ (end-start))
+
         
+        if(time < start) time = start
+
         progress.style.width = `${resultWidth}%`
         
-        timeDiv.textContent = `${secsToHours(Math.floor(time) - Math.floor(start))}/${secsToHours(Math.floor(end)-Math.floor(start))}`
-        // console.log({a: Math.floor(time) - Math.floor(start), b:Math.floor(end)-Math.floor(start)}, {time, start})
+        timeDiv.textContent = `${secsToHours(time.toFixed(3) - start.toFixed(3))}/${secsToHours(end.toFixed(3)-start.toFixed(3))}`
     }
 
     preview.addEventListener("timeupdate", () => {
@@ -105,7 +107,9 @@ document.addEventListener("DOMContentLoaded",() => {
         const {currentTime} = preview
         playPauseButton.innerHTML = preview.paused ? playIcon : pauseIcon
 
-        if((currentTime.toFixed(4) < start.toFixed(4) )|| (currentTime.toFixed(4) > end.toFixed(4))) preview.currentTime = start;
+        if((currentTime.toFixed(4) < start.toFixed(4) )|| (currentTime.toFixed(4) > end.toFixed(4))) {
+            preview.currentTime = start;
+        }
 
         setProgressTime(currentTime)
     })
@@ -156,8 +160,6 @@ document.addEventListener("DOMContentLoaded",() => {
 
     const setTimeToMouseCursor = () => {
         const {x, width} = progressContainer.getBoundingClientRect()
-
-        // if(mouseX < x || mouseX > (x + width)) return
 
         const time = ((mouseX - x)/width) * (end-start)
         preview.currentTime = time + start
@@ -276,6 +278,7 @@ const renderEditCursors = () => {
                 bar.style.paddingRight = `${endRight*100/barWidth}%`
     
                 end = endVal
+                document.getElementById("time").textContent = `${secsToHours(preview.currentTime.toFixed(3) - start.toFixed(3))}/${secsToHours(end.toFixed(3)-start.toFixed(3))}`
             }
         }
         
@@ -289,10 +292,10 @@ function secsToHours(segundos) {
     const hours = Math.floor(segundos / 3600);
     const min = Math.floor((segundos % 3600) / 60);
     const seg = segundos % 60;
-  
+
     const h = String(hours).padStart(2, '0');
     const m = String(min).padStart(2, '0');
-    const s = String(seg).padStart(2, '0');
-  
+    const s = String(seg.toFixed(3)).padStart(2, '0');
+
     return `${h}:${m}:${s}`;
-  }
+}
