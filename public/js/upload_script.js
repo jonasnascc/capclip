@@ -15,6 +15,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const codeInput = document.getElementById("code")
 
+    updateUser()
+
     submitButton.disabled = true
     msgPopupButton.disabled = true
 
@@ -84,6 +86,7 @@ const uploadVideo = async (form) => {
     xhr.onload = () => {
         if (xhr.status === 200) {
             status.textContent = xhr.response.message
+            saveUser()
         } else if(xhr.status === 413){
             status.textContent = 'Erro: O tamanho do vídeo excede o tamanho permitido (50 MB).'
         }else {
