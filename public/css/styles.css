@@ -119,3 +119,31 @@ textarea {
 .videoPlayer , #player_bar, #video_preview, #code{
     border-radius: 10px;
 }
+
+
+#status_div {
+    min-height: 50px;
+    text-align: center;
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+}
+
+#status_progress_bar {
+    position: relative;
+    width: 100%;
+    background-color: #f2f2f2;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#status_progress {
+    height: 100%;
+    background-color: #cc3533;
+    text-align: center;
+    color: white;
+    transition: width .3s ease-in-out;
+    padding-left: 1vw;
+    font-size: 14px;
+}

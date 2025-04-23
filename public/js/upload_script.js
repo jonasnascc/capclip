@@ -1,6 +1,7 @@
 import { createFFmpeg, fetchFile } from 'https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.11.6/+esm';
 
 let validSubmit = false;
+let tempFiles = []
 
 // const ffmpeg = createFFmpeg({ log: true });
 let ffmpeg = createFFmpeg();
@@ -59,7 +60,7 @@ const setValidSubmit = (state) => {
 
 const uploadVideo = async (form) => {
     const videoPreview = document.getElementById("video_preview")
-    // const status = document.getElementById("send_status")
+    const status = document.getElementById("status")
 
     const formData = new FormData(form);
     const xhr = new XMLHttpRequest();
@@ -70,31 +71,29 @@ const uploadVideo = async (form) => {
         formData.set('video_file', blob, 'video_cortado.mp4');
     }
 
+    xhr.upload.addEventListener('loadstart', () => {
+        updateProgressBar(0)
+    })
+
     xhr.upload.addEventListener('progress', (e) => {
-        // status.textContent = '⏳ Enviando...'
+        const percent = Math.round((e.loaded / e.total) * 100);
+        updateProgressBar(percent)
+        status.textContent = 'Enviando...'
     });
 
     xhr.onload = () => {
         if (xhr.status === 200) {
-            // status.textContent = xhr.response.status
-            const files = ffmpeg.FS('readdir', '/');
-            files.forEach(file => {
-                if (file !== '.' && file !== '..') {
-                    ffmpeg.FS('unlink', file);
-                }
-            });
-            (async () => {
-                ffmpeg.exit();
-                ffmpeg = createFFmpeg();
-                await ffmpeg.load();
-            })();
-        } else {
-            // status.textContent = '❌ Erro na requisição.'
+            status.textContent = xhr.response.message
+        } else if(xhr.status === 413){
+            status.textContent = 'Erro: O tamanho do vídeo excede o tamanho permitido (50 MB).'
+        }else {
+            status.textContent = 'Erro na requisição.'
         }
+        cleanFFmpeg()
     };
 
     xhr.onerror = () => {
-        // status.textContent = '❌ Erro de conexão.'
+        status.textContent = 'Erro de conexão.'
     };
 
     xhr.responseType = "json";
@@ -115,7 +114,14 @@ const getCuttedVideoBlob = async () => {
     const inputName = 'input.mp4';
     const outputName = 'output.mp4';
 
+    tempFiles.push(inputName, outputName);
+
     ffmpeg.FS('writeFile', inputName, await fetchFile(file));
+
+    ffmpeg.setProgress(({ ratio }) => {
+        const percent = Math.round(ratio * 100);
+        updateProgressBar(percent);
+    });
 
     await ffmpeg.run(
         '-i', inputName,
@@ -130,4 +136,33 @@ const getCuttedVideoBlob = async () => {
 
     const data = ffmpeg.FS('readFile', outputName);
     return new Blob([data.buffer], { type: 'video/mp4' });
+}
+
+async function cleanFFmpeg() {
+    for (const filename of tempFiles) {
+        try {
+            ffmpeg.FS('unlink', filename);
+        } catch (err) {
+            console.warn(`Failed to delete ${filename}:`, err);
+        }
+    }
+
+    tempFiles = [];
+
+    await ffmpeg.exit();
+    ffmpeg = createFFmpeg({ log: true });
+    await ffmpeg.load();
+}
+
+
+function updateProgressBar(percent) {
+    const status = document.getElementById("status")
+    const bar = document.getElementById('status_progress');
+    if(percent < 99) {
+        status.textContent = "Processando vídeo..."
+    }
+    if (bar) {
+        bar.style.width = `${percent}%`;
+        bar.textContent = `${percent}%`;
+    }
 }
