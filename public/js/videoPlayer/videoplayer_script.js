@@ -193,7 +193,6 @@ document.addEventListener("DOMContentLoaded",() => {
         progress.style.width = `${resultWidth}%`
         
         timeDiv.textContent = `${secsToHours(time.toFixed(3) - start.toFixed(3))}/${secsToHours(end.toFixed(3)-start.toFixed(3))}`
-        console.log({start,end, currentTime: preview.currentTime})
     }
 
     const setTimeToMouseCursor = () => {
