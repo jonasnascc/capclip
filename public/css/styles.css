@@ -13,7 +13,7 @@ body {
     width: 100%;
     height: 100vh;
     margin: 0;
-    
+    flex-direction: column;
 }
 
 .hidden {
@@ -26,10 +26,10 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100%;
     gap: 1.44vh;
     width: calc(63.5vh * 16/9);
     max-width: 100vw;
+    top: calc(63.5vh * 16 / 9 * 0.12 * -0.18)
 }
 
 #form_control {
@@ -162,4 +162,17 @@ textarea {
 
 #video_metrics p{
     margin: 0;
+}
+
+#logo-container {
+    max-width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+#logo {
+    width: calc(63.5vh * 16 / 9 * 0.12);
+    z-index: 5;
 }
