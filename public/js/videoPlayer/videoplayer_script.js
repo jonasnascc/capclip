@@ -63,16 +63,10 @@ document.addEventListener("DOMContentLoaded",() => {
     playPauseButton.id = "play_pause_btn"
     playPauseButton.innerHTML = playIcon
     playPauseButton.type = "button"
-    playPauseButton.addEventListener("click", () => {
+    playPauseButton.addEventListener("mousedown", () => {
         if(!preview) return;
         
-        if(preview.paused) {
-            preview.play()
-            playPauseButton.innerHTML = pauseIcon
-        } else {
-            preview.pause()
-            playPauseButton.innerHTML = playIcon
-        }
+        playPauseVideo()
     })
 
     buttonsDiv.appendChild(rightButtonsDiv)
@@ -91,6 +85,18 @@ document.addEventListener("DOMContentLoaded",() => {
         end = preview.duration;
     })
 
+    const playPauseVideo = async () => {
+        if(!preview) return;
+
+        if(await preview.paused) {
+            await preview.play()
+            playPauseButton.innerHTML = pauseIcon
+        } else {
+            await preview.pause()
+            playPauseButton.innerHTML = playIcon
+        }
+    }
+
     const setProgressTime = (time) => {
         let resultWidth = ((time-start) * 100/ (end-start))
 
@@ -105,7 +111,6 @@ document.addEventListener("DOMContentLoaded",() => {
     preview.addEventListener("timeupdate", () => {
         if(start === undefined || end === undefined) return;
         const {currentTime} = preview
-        playPauseButton.innerHTML = preview.paused ? playIcon : pauseIcon
 
         if((currentTime.toFixed(4) < start.toFixed(4) )|| (currentTime.toFixed(4) > end.toFixed(4))) {
             preview.currentTime = start;
@@ -129,6 +134,11 @@ document.addEventListener("DOMContentLoaded",() => {
 
         overlay.appendChild(overlayHeader)
         overlayHeader.id = "overlay_header"
+        overlay.addEventListener("mousedown", (e) => {
+            if (closeVideoButton.contains(e.target)) return
+
+            playPauseVideo()
+        })
 
         overlayHeader.appendChild(closeVideoButton)
         closeVideoButton.id = "close_video_btn"
