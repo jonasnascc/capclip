@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded",() => {
         if(start === undefined || end === undefined) return;
         const {currentTime} = preview
 
-        if((currentTime.toFixed(4) < start.toFixed(4) )|| (currentTime.toFixed(4) > end.toFixed(4))) {
+        if((parseFloat(currentTime.toFixed(4)) < parseFloat(start.toFixed(4)) ) || (parseFloat(currentTime.toFixed(4)) > parseFloat(end.toFixed(4)))) {
             preview.currentTime = start;
         }
 
@@ -193,6 +193,7 @@ document.addEventListener("DOMContentLoaded",() => {
         progress.style.width = `${resultWidth}%`
         
         timeDiv.textContent = `${secsToHours(time.toFixed(3) - start.toFixed(3))}/${secsToHours(end.toFixed(3)-start.toFixed(3))}`
+        console.log({start,end, currentTime: preview.currentTime})
     }
 
     const setTimeToMouseCursor = () => {
