@@ -20,7 +20,6 @@ let previewEmpty = true
 
 let isOverlayVisible = false
 
-
 let currentVideoBitrate;
 let videoMetrics = {}
 
@@ -28,7 +27,6 @@ let setProgressTimeImpl = (time) => {}
 
 document.addEventListener("DOMContentLoaded",() => {
     const preview = document.getElementById("video_preview")
-
     const videoPlayer = document.querySelector(".videoPlayer")
     const playerBarContainer = document.getElementById("player_bar")
     const bar = document.createElement("div")
@@ -43,7 +41,6 @@ document.addEventListener("DOMContentLoaded",() => {
 
     let editDiv = null;
     let videoOverlay = null;
-
 
     playerBarContainer.appendChild(bar)
     bar.className = "plyr_bar"
@@ -67,11 +64,6 @@ document.addEventListener("DOMContentLoaded",() => {
     playPauseButton.id = "play_pause_btn"
     playPauseButton.innerHTML = playIcon
     playPauseButton.type = "button"
-    playPauseButton.addEventListener("mousedown", () => {
-        if(!preview) return;
-        
-        playPauseVideo()
-    })
 
     buttonsDiv.appendChild(rightButtonsDiv)
     rightButtonsDiv.id = "right_buttons_div"
@@ -80,14 +72,25 @@ document.addEventListener("DOMContentLoaded",() => {
     editButton.id = "video_edit_button"
     editButton.type = "button"
 
-    preview.addEventListener("loadedmetadata", () => {
+    const handleLoadedMetadata = () => {
         previewEmpty = false
         timeDiv.textContent = `${secsToHours(0)}/${secsToHours(preview.duration.toFixed(3))}`
         playPauseButton.innerHTML = preview.paused ? playIcon : pauseIcon
 
         start = 0;
         end = preview.duration;
-    })
+    }
+    
+    const handleTimeUpdate = () => {
+        if(start === undefined || end === undefined) return;
+        const {currentTime} = preview
+
+        if((currentTime.toFixed(4) < start.toFixed(4) )|| (currentTime.toFixed(4) > end.toFixed(4))) {
+            preview.currentTime = start;
+        }
+
+        setProgressTime(currentTime)
+    }
 
     const playPauseVideo = async () => {
         if(!preview) return;
@@ -101,29 +104,7 @@ document.addEventListener("DOMContentLoaded",() => {
         }
     }
 
-    const setProgressTime = (time) => {
-        let resultWidth = ((time-start) * 100/ (end-start))
-
-        
-        if(time < start) time = start
-
-        progress.style.width = `${resultWidth}%`
-        
-        timeDiv.textContent = `${secsToHours(time.toFixed(3) - start.toFixed(3))}/${secsToHours(end.toFixed(3)-start.toFixed(3))}`
-    }
-
-    preview.addEventListener("timeupdate", () => {
-        if(start === undefined || end === undefined) return;
-        const {currentTime} = preview
-
-        if((currentTime.toFixed(4) < start.toFixed(4) )|| (currentTime.toFixed(4) > end.toFixed(4))) {
-            preview.currentTime = start;
-        }
-
-        setProgressTime(currentTime)
-    })
-
-    videoPlayer.addEventListener("mouseenter", () => {
+    const renderVideoOverlay = () => {
         if(previewEmpty || isOverlayVisible) {
             return;
         }
@@ -148,29 +129,71 @@ document.addEventListener("DOMContentLoaded",() => {
         closeVideoButton.id = "close_video_btn"
         closeVideoButton.type = "button"
         closeVideoButton.innerHTML = closeIcon
-        closeVideoButton.addEventListener("click", () => {
-            const dropZone = document.querySelector('.dropZone');
-            preview.removeAttribute("src")
-            preview.classList.add("hidden")
-            preview.innerHTML = ""
-            preview.load()
-            previewEmpty = true
-            dropZone.classList.remove("hidden")
-            videoOverlay.remove()
-            videoOverlay = null
-        })
+        closeVideoButton.addEventListener("click", handleCloseVideo)
 
         videoOverlay = overlay
         isOverlayVisible = true
-    })
+    }
 
-    videoPlayer.addEventListener("mouseleave", () => {
+    const removeVideoOverlay =  () => {
         if(videoOverlay){
             videoOverlay.remove()
             videoOverlay = null
         }
         isOverlayVisible = false
-    })  
+    }
+    
+    const handleProgressContainerMouseDown = () => {
+        clickingBar = true
+        
+        if(grabbingStartCursor || grabbingEndCursor) return
+
+        setTimeToMouseCursor()
+    }
+
+    const handleDocMouseMove = (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+    
+        if(clickingBar && !(grabbingStartCursor || grabbingEndCursor)) {
+            const time = setTimeToMouseCursor()
+            setProgressTime(time)
+        }
+    }
+
+    const handleCloseVideo = () => {
+        const dropZone = document.querySelector('.dropZone');
+        const videoMetricsDiv = document.getElementById("video_metrics")
+
+        dropZone.classList.remove("hidden")
+
+        resetPreview()
+        resetVideoVariables()
+
+        videoOverlay.remove()
+        videoOverlay = null
+        isOverlayVisible = false
+        
+        videoMetricsDiv.textContent = ""
+        setEditing(false)
+        setProgressTime(0)
+    }
+
+
+    const setProgressTime = (time) => {
+        if(previewEmpty) {
+            timeDiv.textContent = `${secsToHours(0)}/${secsToHours(0)}`
+            progress.style.width = `0px`
+            return
+        }
+        let resultWidth = ((time-start) * 100/ (end-start))
+
+        if(time < start) time = start
+
+        progress.style.width = `${resultWidth}%`
+        
+        timeDiv.textContent = `${secsToHours(time.toFixed(3) - start.toFixed(3))}/${secsToHours(end.toFixed(3)-start.toFixed(3))}`
+    }
 
     const setTimeToMouseCursor = () => {
         const {x, width} = progressContainer.getBoundingClientRect()
@@ -181,33 +204,14 @@ document.addEventListener("DOMContentLoaded",() => {
         return time + start
     }
 
-    progressContainer.addEventListener("mousedown", () => {
-        clickingBar = true
-        
-        if(grabbingStartCursor || grabbingEndCursor) return
-
-        setTimeToMouseCursor()
-    })
-
-    document.addEventListener("mouseup", () => {
-        clickingBar = false
-    })
-
-    document.addEventListener("mousemove", (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-    
-        if(clickingBar && !(grabbingStartCursor || grabbingEndCursor)) {
-            const time = setTimeToMouseCursor()
-            setProgressTime(time)
-        }
-    })
-
-    editButton.addEventListener("click", () => {
+    const handleClickEditButton = () => {
         if(previewEmpty) return;
         editMode = !editMode
-        
-        if(editMode) {
+        setEditing(editMode)
+    }
+
+    const setEditing = (state) => {
+        if(state) {
             editDiv = renderEditCursors()
             preview.currentTime = 0
         }
@@ -227,7 +231,25 @@ document.addEventListener("DOMContentLoaded",() => {
 
             bar.style.padding = "0px"
         }
-    })
+    }
+
+    const resetPreview = () => {
+        preview.removeAttribute("src")
+        preview.classList.add("hidden")
+        preview.innerHTML = ""
+        preview.load()
+        previewEmpty = true
+    }
+
+    preview.addEventListener("loadedmetadata", handleLoadedMetadata)
+    preview.addEventListener("timeupdate", handleTimeUpdate)
+    videoPlayer.addEventListener("mouseenter", renderVideoOverlay)
+    videoPlayer.addEventListener("mouseleave", removeVideoOverlay)  
+    progressContainer.addEventListener("mousedown", handleProgressContainerMouseDown)
+    document.addEventListener("mouseup", () => clickingBar = false)
+    document.addEventListener("mousemove", handleDocMouseMove)
+    editButton.addEventListener("click", handleClickEditButton)
+    playPauseButton.addEventListener("mousedown", playPauseVideo)
 
     setProgressTimeImpl = setProgressTime
 })
@@ -338,4 +360,17 @@ function secsToHours(segundos) {
     const s = String(seg.toFixed(3)).padStart(2, '0');
 
     return `${h}:${m}:${s}`;
+}
+
+const resetVideoVariables = () => {
+    clickingBar = false;
+    grabbingStartCursor = false;
+    grabbingEndCursor = false;
+    start = undefined;
+    end = undefined;
+    editMode = false;
+    previewEmpty = true
+    isOverlayVisible = false
+    currentVideoBitrate = undefined;
+    videoMetrics = {}
 }

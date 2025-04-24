@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     const dropZone = document.querySelector('.dropZone');
     const fileInput = document.getElementById('video_input');
-    const dropText = document.getElementById('dropText');
     const videoPreview = document.getElementById('video_preview');
 
     dropZone.addEventListener('click', () => {
@@ -31,7 +30,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const files = e.dataTransfer.files;
       if (files.length > 0) {
         fileInput.files = files;
-        dropText.textContent = `Soltou: ${files[0].name}`;
+        dropZone.classList.add("hidden")
+        handleVideoInputChange(files[0])
+        videoPreview.classList.remove("hidden")
       }
     });
 })

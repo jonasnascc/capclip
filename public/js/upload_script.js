@@ -29,8 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
     submitButton.disabled = true
     msgPopupButton.disabled = true
 
-    videoInput.addEventListener("change", async () => {
-        const file = videoInput.files[0];
+    const onVideoInputChange = async (file) => {
         if (!file) {
             previewEmpty = true
             return
@@ -53,8 +52,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const url = URL.createObjectURL(file);
         videoPreview.src = url;
-        videoPreview.load();
-        videoPreview.play();
+        await videoPreview.load();
+        await videoPreview.play();
+    }
+
+    window.handleVideoInputChange = onVideoInputChange
+
+    videoInput.addEventListener("change", async () => {
+        const file = videoInput.files[0];
+        onVideoInputChange(file)
     })
 
     codeInput.addEventListener("input", (e) => {
