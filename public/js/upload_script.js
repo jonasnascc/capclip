@@ -7,12 +7,9 @@ let ffmpeg = createFFmpeg();
 
 ffmpeg.setLogger(({message}) => {
     const match = message.match(/bitrate:\s+(\d+)\s+kb\/s/)
-    const durationMatch = message.match(/Duration:\s+(\d+):(\d+):(\d+\.\d+)/);
     if(match) {
         setCurrentVideoBitrate(match[1])
-        console.log(match[1])
     }
-    if(durationMatch) console.log(message)
 });
 
 document.addEventListener("DOMContentLoaded", () => {
