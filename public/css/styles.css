@@ -147,3 +147,19 @@ textarea {
     padding-left: 1vw;
     font-size: 14px;
 }
+
+#left_subdiv {
+    flex: 1;
+    font-size: 11px;
+}
+
+#video_metrics {
+    display: flex;
+    flex-direction: column;
+    gap: .5vh;
+    color: white;
+}
+
+#video_metrics p{
+    margin: 0;
+}

@@ -6,6 +6,7 @@ let msgPopupExpanded = false
 document.addEventListener("DOMContentLoaded", () => {
     const msgPopupButton = document.getElementById("msg_popup_button")
     const msgPopup = document.getElementById("msg_popup")
+    const closePopupBtn = document.getElementById("close_popup_btn")
 
     msgPopupButton.innerHTML = `<span>DESCRIÇÃO + ENVIAR</span>${expandIcon}`
 
@@ -16,6 +17,10 @@ document.addEventListener("DOMContentLoaded", () => {
     msgPopupButton.addEventListener("click", (e) => {
         e.stopPropagation()
         setExpandMsgPopup(!msgPopupExpanded)
+    })
+
+    closePopupBtn.addEventListener('click', () => {
+        setExpandMsgPopup(false)
     })
 
     document.addEventListener('click', (e) => {

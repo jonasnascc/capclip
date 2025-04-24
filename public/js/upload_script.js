@@ -3,8 +3,17 @@ import { createFFmpeg, fetchFile } from 'https://cdn.jsdelivr.net/npm/@ffmpeg/ff
 let validSubmit = false;
 let tempFiles = []
 
-// const ffmpeg = createFFmpeg({ log: true });
 let ffmpeg = createFFmpeg();
+
+ffmpeg.setLogger(({message}) => {
+    const match = message.match(/bitrate:\s+(\d+)\s+kb\/s/)
+    const durationMatch = message.match(/Duration:\s+(\d+):(\d+):(\d+\.\d+)/);
+    if(match) {
+        setCurrentVideoBitrate(match[1])
+        console.log(match[1])
+    }
+    if(durationMatch) console.log(message)
+});
 
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("upload_form")
@@ -20,12 +29,24 @@ document.addEventListener("DOMContentLoaded", () => {
     submitButton.disabled = true
     msgPopupButton.disabled = true
 
-    videoInput.addEventListener("change", () => {
+    videoInput.addEventListener("change", async () => {
         const file = videoInput.files[0];
         if (!file) {
             previewEmpty = true
             return
         };
+
+        if (!ffmpeg.isLoaded()) {
+            await ffmpeg.load();
+        }
+
+        const inputName = "input1.mp4"
+        ffmpeg.FS('writeFile', inputName , await fetchFile(file));
+        await ffmpeg.run("-i", inputName)
+        tempFiles.push(inputName);
+
+        setVideoMetrics({tamanho: `${(file.size / (1024 * 1024)).toFixed(2)} MB`})
+        videoPreview.addEventListener("loadedmetadata", () => {setVideoMetrics({duracao: secsToHours(videoPreview.duration)})})
 
         setValidSubmit(!!codeInput.value)
         previewEmpty = false
@@ -132,7 +153,6 @@ const getCuttedVideoBlob = async () => {
         '-to', String(end),
         '-c:v', 'libx264',
         '-c:a', 'aac',
-        '-strict', 'experimental',
         '-preset', 'ultrafast',
         outputName
     );

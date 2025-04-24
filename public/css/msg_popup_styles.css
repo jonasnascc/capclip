@@ -42,6 +42,28 @@
     gap: .5vw;
 }
 
+#msg_popup_header {
+    display: flex;
+    align-items: center;
+    border-bottom: solid 1px rgb(118, 118, 118);
+    margin-bottom: 2vh;
+    padding-bottom: 1vh;
+}
+
+#msg_popup_header h1{
+    margin: 0;
+    font-size: 18px;
+    flex: 1;
+    text-align: center;
+}
+
+#close_popup_btn {
+    all:unset;
+    cursor: pointer;
+}
+
+
+
 @media (max-width:580px) {
     #msg_popup {
         width: 100vw;

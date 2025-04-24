@@ -20,6 +20,10 @@ let previewEmpty = true
 
 let isOverlayVisible = false
 
+
+let currentVideoBitrate;
+let videoMetrics = {}
+
 let setProgressTimeImpl = (time) => {}
 
 document.addEventListener("DOMContentLoaded",() => {
@@ -290,6 +294,10 @@ const renderEditCursors = () => {
                 end = endVal
                 document.getElementById("time").textContent = `${secsToHours(preview.currentTime.toFixed(3) - start.toFixed(3))}/${secsToHours(end.toFixed(3)-start.toFixed(3))}`
             }
+            setVideoMetrics({duracao_de_corte: secsToHours((end-start))})
+            if(start!==0 || end!== preview.duration) {
+                setVideoMetrics({tamanho_estimado_de_corte: `${(currentVideoBitrate * (end-start) / (8 * 1024)).toFixed(2)} MB`})
+            }
         }
         
     })
@@ -297,6 +305,28 @@ const renderEditCursors = () => {
     return editContainer;
 }
 
+
+const setVideoMetrics = (metrics) => {
+    const videoMetricsDiv = document.getElementById("video_metrics")
+    const {tamanho, duracao, tamanho_estimado_de_corte, duracao_de_corte} = metrics
+
+    videoMetrics = {
+        tamanho: tamanho ? tamanho : videoMetrics.tamanho,
+        duracao: duracao ? duracao : videoMetrics.duracao,
+        tamanho_estimado_de_corte: tamanho_estimado_de_corte ? tamanho_estimado_de_corte : videoMetrics.tamanho_estimado_de_corte,
+        duracao_de_corte: duracao_de_corte ? duracao_de_corte : videoMetrics.duracao_de_corte
+    }
+
+    videoMetricsDiv.innerHTML = ""
+    for(let key of Object.keys(videoMetrics)) {
+        const val = videoMetrics[key];
+        if(val) videoMetricsDiv.innerHTML = videoMetricsDiv.innerHTML + `<p>${key.split("_").join(" ")}: ${val}</p>`
+    }
+}
+
+const setCurrentVideoBitrate = (bitrate) => {
+    currentVideoBitrate = bitrate
+}
 
 function secsToHours(segundos) {
     const hours = Math.floor(segundos / 3600);

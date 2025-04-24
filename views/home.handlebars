@@ -12,12 +12,19 @@
         <div id="player_bar"></div>
     </div>
     <div id="submit_div">
+        <div id="left_subdiv">
+            <div id="video_metrics"></div>
+        </div>
         <div class="code_input_div">
             <label for="code">Digite seu código: </label>
             <input id="code" name="code" type="text" required/>
         </div>
         <div id="msg_popup" style="visibility: hidden;">
             <div id="msg_popup_body">
+                <div id="msg_popup_header">
+                    <h1>Envie seu clip para os CAP's</h1>
+                    <button id="close_popup_btn" type="button"><i class="bi bi-x-lg"></i></button>
+                </div>
                 <label for="description">Descrição</label>
                 <textarea id="description" name="description"></textarea>
                 <div id="status_div">
