@@ -112,12 +112,12 @@
 }
 
 #start_cursor {
-    left: 0;
+    left: calc(-0.8vh * 1.5);
     top: 0;
 }
 
 #end_cursor {
-    right: 0;
+    right: calc(-0.8vh * 1.5);
     top: 0;
 }
 
