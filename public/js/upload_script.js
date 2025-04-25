@@ -87,6 +87,7 @@ const setValidSubmit = (state) => {
 const uploadVideo = async (form) => {
     const videoPreview = document.getElementById("video_preview")
     const status = document.getElementById("status")
+    const codeInput = document.getElementById("code")
 
     const formData = new FormData(form);
     const xhr = new XMLHttpRequest();
@@ -110,6 +111,11 @@ const uploadVideo = async (form) => {
     xhr.onload = () => {
         if (xhr.status === 200) {
             status.textContent = xhr.response.message
+
+            sessionStorage.setItem("showSentConfirmation", true)
+            sessionStorage.setItem("userCode", codeInput.value.trim())
+            window.location = "/sentConfirm"
+
             saveUser()
         } else if(xhr.status === 413){
             status.textContent = 'Erro: O tamanho do vídeo excede o tamanho permitido (50 MB).'

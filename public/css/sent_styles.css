@@ -1,0 +1,38 @@
+.videoSentPageDiv {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+    gap: 2vh;
+}
+
+a:visited{
+    color: white;
+}
+
+#logo {
+    width: 20vh;
+}
+
+#undo {
+    all: unset;
+    cursor: pointer;
+    color: white;
+    border: solid 1px white;
+    border-radius: 5px;
+    padding: 1vh 1vw;
+}
+
+#undo:hover {
+    color: #480A0A;
+    background-color: white;
+}
+
+#undo:disabled {
+    background-color: rgba(255, 255, 255, 0.082);
+    border: none;
+    color: white;
+    cursor: not-allowed;
+}

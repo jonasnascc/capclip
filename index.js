@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 const {loadUsersCodes} = require("./helpers/loadUsersCodes")
+const { deleteLastUsersClip } = require('./helpers/deleteLastUsersClip');
 
 const express = require('express');
 const exphbs = require("express-handlebars");
@@ -38,8 +39,13 @@ app.use((req, res, next) => {
 });
 
 app.get("/", (req, res) => {
-    res.render("home");
+    res.render("home", {homePage: true});
 });
+
+app.get("/sentConfirm", (req, res) => {
+    res.render("sent", {sendPage: true})
+})
+
 
 app.post('/upload', upload.single('video_file'), async (req, res) => {
     const { code, description } = req.body;
@@ -74,9 +80,21 @@ app.post('/upload', upload.single('video_file'), async (req, res) => {
     }
 });
 
+app.post("/undoLastClip", async (req, res) => {
+    const {userCode} = req.body
+    if(!userCode) return res.status(403).send({message: "UserCode not found."})
+    
+    const user = usersCodes.filter(user => user.userCode === userCode)[0]
+    if(!user) return res.status(403).send({message: "User not found."})
+
+    const resp = await deleteLastUsersClip(client,user.userId)
+    if(!resp) return res.status(500).send({message: "Internal Error."})
+
+    return res.status(200).send({message: "Deleted last clip successfully"})
+})
+
 app.post("/updateCodes", async (req,res) => {
     usersCodes = await loadUsersCodes(client)
-    console.log(usersCodes)
 
     return res.status(200).send({message: "Codes updated."})
 })
