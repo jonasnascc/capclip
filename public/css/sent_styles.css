@@ -8,6 +8,9 @@
     gap: 2vh;
 }
 
+a {
+    color: white;
+}
 a:visited{
     color: white;
 }
