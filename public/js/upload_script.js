@@ -144,8 +144,8 @@ const getCuttedVideoBlob = async () => {
         await ffmpeg.load();
     }
 
-    const inputName = 'input.mp4';
-    const outputName = 'output.mp4';
+    const inputName = 'input_cutted.mp4';
+    const outputName = 'output_cutted.mp4';
 
     tempFiles.push(inputName, outputName);
 
