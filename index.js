@@ -75,6 +75,7 @@ app.post('/upload', upload.single('video_file'), async (req, res) => {
 
         return res.status(200).send({message: "Vídeo enviado para o Discord!" });
     } catch (err) {
+        console.error(err)
         if(err.message.includes("Request entity too large")) return res.status(413).send({message:'Request entity too large'});
         return res.status(500).send({message:'Erro ao enviar vídeo pro Discord.'});
     }
