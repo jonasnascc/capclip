@@ -1,5 +1,7 @@
 <form id="signupForm">
-    <h1>Cadastro</h1>
+    <img id="logo" src="/img/regular-logo.png">
+
+    <h1>Cadastre-se</h1>
     <div id="auth_form_control">
         <label for="login">Login: </label>
         <input
@@ -18,13 +20,24 @@
             required
         />
     </div>
-    <button type="submit">Cadastrar</button>
-    <p>Não possui uma conta? <a href="/signup">Cadastre-se</a></p>
+    <div id="auth_form_control">
+        <label for="passwordConfirm">Confirme a senha: </label>
+        <input
+            type="password"
+            name="passwordConfirm"
+            id="passwordConfirm"
+            required
+        />
+    </div>
+    <button type="submit">CADASTRAR</button>
 </form>
 
 
-<form id="tokenConfirmForm">
+<form class="tokenConfirmForm hidden">
     <div>Por favor, envie uma mensagem para o Bot com o seguinte conteúdo: </div>
-    <input id="token_value" name="token" readonly/>
+    <div id="token_form_control">
+        <input id="token_value" name="token" readonly/>
+        <button id="copy_token_btn" type="button">Copiar</button>
+    </div>
     <button id="signupBtn" type="submit">Confirmar</button>
 </form>

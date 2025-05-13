@@ -1,7 +1,8 @@
 const signupForm = document.getElementById("signupForm")
 const loginForm = document.getElementById("loginForm")
-const tokenForm = document.getElementById("tokenConfirmForm")
+const tokenForm = document.querySelector(".tokenConfirmForm")
 const tokenInput = document.getElementById("token_value")
+const tokenCopyBtn = document.getElementById("copy_token_btn")
 
 if(signupForm) signupForm.addEventListener("submit", async (e) => {
     e.preventDefault()
@@ -25,6 +26,8 @@ if(signupForm) signupForm.addEventListener("submit", async (e) => {
     .catch((err) => console.error(err))
 
     if(response) {
+        signupForm.classList.add("hidden")
+        tokenForm.classList.remove("hidden")
         tokenInput.value = response.token.trim()
     }
 })
@@ -62,6 +65,24 @@ if(tokenForm) tokenForm.addEventListener("submit", async (e) => {
     const token = tokenInput.value
 
     await verifyUser(token)
+})
+
+if(tokenInput) tokenInput.addEventListener('click', () => {
+    tokenInput.select();
+    tokenInput.setSelectionRange(0, 99999);
+})
+
+if(tokenCopyBtn) tokenCopyBtn.addEventListener("click", async () => {
+    tokenInput.select();
+    tokenInput.setSelectionRange(0, 99999);
+
+    try {
+        await navigator.clipboard.writeText(tokenInput.value);
+        tokenCopyBtn.textContent = "COPIADO!"
+        tokenCopyBtn.disabled = true
+    } catch (err) {
+        console.error('Error while copying:', err);
+    }
 })
 
 const saveLocalUser = (user, token) => {
