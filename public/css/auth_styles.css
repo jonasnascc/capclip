@@ -109,6 +109,11 @@ form button {
     cursor: auto;
 }
 
+#errorMsg, #confirmErrorMsg {
+    font-size: 14px;
+    color: red;
+}
+
 @media (max-width: 1390px) {
     form {
         width: 410px;

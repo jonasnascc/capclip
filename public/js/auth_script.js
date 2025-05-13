@@ -4,6 +4,9 @@ const tokenForm = document.querySelector(".tokenConfirmForm")
 const tokenInput = document.getElementById("token_value")
 const tokenCopyBtn = document.getElementById("copy_token_btn")
 
+const errorMsg = document.getElementById("errorMsg")
+const confirmErrorMsg = document.getElementById("confirmErrorMsg")
+
 if(signupForm) signupForm.addEventListener("submit", async (e) => {
     e.preventDefault()
 
@@ -11,6 +14,19 @@ if(signupForm) signupForm.addEventListener("submit", async (e) => {
     const login = formData.get('login');
     const password = formData.get('password');
     const passwordConfirm = formData.get('passwordConfirm');
+
+    if(!login || !password || !passwordConfirm) {
+         errorMsg.textContent = "Login, senha e confirmaçao de senha não podem ser vazios!"
+         return
+    }
+    if(password !== passwordConfirm) {
+        errorMsg.textContent = "Senha e confirmação de senha precisam ser iguais."
+        return
+    }
+    if(password.length < 8){
+        errorMsg.textContent = "O tamanho da senha não pode ser menor que 8 caracteres."
+        return
+    }
 
     let response = null;
     await fetch("/auth/signup", {
@@ -20,8 +36,19 @@ if(signupForm) signupForm.addEventListener("submit", async (e) => {
             'Content-Type': 'application/json'
         },
     }).then((resp) => {
-            if(!resp.ok) throw new Error("Could not register user!")
-            return resp.json()
+        if(!resp.ok) {
+            if(resp.status === 404) {
+                errorMsg.textContent = "Login e/ou senha está incorreto."
+            }
+            else if(resp.status === 422) {
+                errorMsg.textContent = "Login ou senha não podem ser vazios!"
+            }
+            else {
+                errorMsg.textContent = "Não foi possível registrar o usuário"
+            }
+            throw new Error("Could not register user!")
+        }
+        return resp.json()
     })
     .then((data) => response = data)
     .catch((err) => console.error(err))
@@ -40,6 +67,11 @@ if(loginForm) loginForm.addEventListener("submit", async (e) => {
     const login = formData.get('login');
     const password = formData.get('password');
 
+    if(!login || !password) {
+        errorMsg.textContent = "Login ou senha não podem ser vazios!"
+        return
+    }
+
     let response = null;
     await fetch("/auth/login", {
         method:"POST", 
@@ -48,8 +80,19 @@ if(loginForm) loginForm.addEventListener("submit", async (e) => {
             'Content-Type': 'application/json'
         },
     }).then((resp) => {
-            if(!resp.ok) throw new Error("Could not authenticate user!")
-            return resp.json()
+        if(!resp.ok) {
+            if(resp.status === 404) {
+                errorMsg.textContent = "Login e/ou senha está incorreto."
+            }
+            else if(resp.status === 422) {
+                errorMsg.textContent = "Login ou senha não podem ser vazios!"
+            }
+            else {
+                errorMsg.textContent = "Não foi possível autenticar o usuário"
+            }
+            throw new Error("Could not authenticate user!")
+        }
+        return resp.json()
     })
     .then((data) => response = data)
     .catch((err) => console.error(err))
@@ -65,7 +108,10 @@ if(tokenForm) tokenForm.addEventListener("submit", async (e) => {
 
     const token = tokenInput.value
 
-    await verifyUser(token)
+    const success = await verifyUser(token)
+    if(!success) {
+        confirmErrorMsg.textContent = "Não foi possível confirmar o token. Verifique se enviou o texto correto."
+    }
 })
 
 if(tokenInput) tokenInput.addEventListener('click', () => {
@@ -121,12 +167,14 @@ const verifyUser = async (token) => {
     }
     else {
         removeLocalUser()
-        saveLocalUser(response.user, response.token)
         const locationPath = window.location.pathname
         if(!['/login', '/signup'].includes(locationPath)) {
             window.location.href = "/login"
         }
     }
+
+    console.log(response)
+    return !!response
 }
 
 document.addEventListener("DOMContentLoaded", async () => {

@@ -29,15 +29,19 @@
             required
         />
     </div>
+    
+    <div id="errorMsg"></div>
     <button type="submit">CADASTRAR</button>
 </form>
 
 
 <form class="tokenConfirmForm hidden">
-    <div>Por favor, envie uma mensagem para o Bot com o seguinte conteúdo: </div>
+    <div>Por favor, envie uma mensagem privada no Discord para o Bot com o seguinte conteúdo: </div>
     <div id="token_form_control">
         <input id="token_value" name="token" readonly/>
         <button id="copy_token_btn" type="button">Copiar</button>
     </div>
+    
+    <div id="confirmErrorMsg"></div>
     <button id="signupBtn" type="submit">Confirmar</button>
 </form>
