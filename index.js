@@ -1,6 +1,5 @@
 require('dotenv').config();
 
-const {loadUsersCodes} = require("./helpers/loadUsersCodes")
 const { deleteLastUsersClip } = require('./helpers/deleteLastUsersClip');
 
 const express = require('express');
@@ -18,11 +17,8 @@ const app = express();
 
 const client = new Client();
 
-let usersCodes = [];
-
 client.on('ready', async () => {
     console.log(`${client.user.username} is now running!`);
-    usersCodes = await loadUsersCodes(client)
 });
 
 client.login(process.env.TOKEN);
@@ -41,7 +37,7 @@ app.use((req, res, next) => {
 });
 
 app.use(session({
-    secret: 'chave-secreta',
+    secret: process.env.SESSION_SECRET_KEY,
     resave: false,
     saveUninitialized: false
 }));
@@ -77,19 +73,11 @@ app.get("/signup", requireNoAuth, (req, res) => {
 })
 
 app.post('/upload', requireAuth, upload.single('video_file'), async (req, res) => {
-    const { code, description } = req.body;
+    const { description } = req.body;
 
-    if (!code) return res.status(422).send({message: "Código de usuário ausente"});
     if (!req.file) return res.status(400).send({message: 'Nenhum vídeo enviado.'});
 
-    for(let i=1; i<=2; i++){
-        const usersFilter = usersCodes.filter(uc => uc.userCode === code);
-        if(usersFilter.length === 0) {
-            if(i==1) usersCodes = await loadUsersCodes(client)
-            if(i==2) return res.status(401).send({message: "Usuário não autorizado"})
-        }
-        else userId = usersFilter[0].userId
-    }
+    const userId = req.session.user.id
 
     try {
         const videoPath = path.join(__dirname, 'uploads/video.mp4');
@@ -111,22 +99,12 @@ app.post('/upload', requireAuth, upload.single('video_file'), async (req, res) =
 });
 
 app.post("/undoLastClip", requireAuth, async (req, res) => {
-    const {userCode} = req.body
-    if(!userCode) return res.status(403).send({message: "UserCode not found."})
-    
-    const user = usersCodes.filter(user => user.userCode === userCode)[0]
-    if(!user) return res.status(403).send({message: "User not found."})
+    const userId = req.session.user.id
 
-    const resp = await deleteLastUsersClip(client,user.userId)
+    const resp = await deleteLastUsersClip(client,userId)
     if(!resp) return res.status(500).send({message: "Internal Error."})
 
     return res.status(200).send({message: "Deleted last clip successfully"})
-})
-
-app.post("/updateCodes", async (req,res) => {
-    usersCodes = await loadUsersCodes(client)
-
-    return res.status(200).send({message: "Codes updated."})
 })
 
 app.post("/auth/login", requireNoAuth, async (req, res) => {

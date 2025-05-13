@@ -18,19 +18,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const videoPreview = document.getElementById("video_preview")
     const submitButton = document.getElementById("submit_button")
     const msgPopupButton = document.getElementById("msg_popup_button")
-
-    const codeInput = document.getElementById("code")
-
-    updateUser()
-
+    
     submitButton.disabled = true
     msgPopupButton.disabled = true
 
     const onVideoInputChange = async (file) => {
         if (!file) {
             previewEmpty = true
+            setValidSubmit(false)
             return
         };
+        setValidSubmit(true)
 
         if (!ffmpeg.isLoaded()) {
             await ffmpeg.load();
@@ -44,7 +42,6 @@ document.addEventListener("DOMContentLoaded", () => {
         setVideoMetrics({tamanho: `${(file.size / (1024 * 1024)).toFixed(2)} MB`})
         videoPreview.addEventListener("loadedmetadata", () => {setVideoMetrics({duracao: secsToHours(videoPreview.duration)})})
 
-        setValidSubmit(!!codeInput.value)
         previewEmpty = false
 
         const url = URL.createObjectURL(file);
@@ -58,12 +55,6 @@ document.addEventListener("DOMContentLoaded", () => {
     videoInput.addEventListener("change", async () => {
         const file = videoInput.files[0];
         onVideoInputChange(file)
-    })
-
-    codeInput.addEventListener("input", (e) => {
-        const val = e.target.value
-
-        setValidSubmit(!!val && !previewEmpty)
     })
 
     form.addEventListener('submit', async (e) => {
@@ -87,7 +78,6 @@ const setValidSubmit = (state) => {
 const uploadVideo = async (form) => {
     const videoPreview = document.getElementById("video_preview")
     const status = document.getElementById("status")
-    const codeInput = document.getElementById("code")
 
     const formData = new FormData(form);
     const xhr = new XMLHttpRequest();
@@ -113,10 +103,7 @@ const uploadVideo = async (form) => {
             status.textContent = xhr.response.message
 
             sessionStorage.setItem("showSentConfirmation", true)
-            sessionStorage.setItem("userCode", codeInput.value.trim())
             window.location = "/sentConfirm"
-
-            saveUser()
         } else if(xhr.status === 413){
             status.textContent = 'Erro: O tamanho do vídeo excede o tamanho permitido (50 MB).'
         }else {

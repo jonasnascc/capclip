@@ -1,14 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
     const undoBtn = document.getElementById("undo")
-    const userCode = sessionStorage.getItem("userCode")
 
     if(undoBtn) undoBtn.addEventListener("click", async () => {
         const undoButton = document.getElementById("undo")
-        if(!userCode) return;
 
         const resp = await fetch("/undoLastClip", {
-            method: "POST", 
-            body: JSON.stringify({userCode}),
+            method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
@@ -28,5 +25,4 @@ document.addEventListener("DOMContentLoaded", () => {
         window.location = "/"
     }
     sessionStorage.removeItem("showSentConfirmation")
-    sessionStorage.removeItem("userCode")
 })

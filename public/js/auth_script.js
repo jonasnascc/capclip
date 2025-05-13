@@ -92,17 +92,16 @@ const verifyUser = async (token) => {
 
     if(response) {
         saveLocalUser(response.user, response.token)
-        const locationHref = window.location.href
-        console.log(locationHref)
-        if(['/login', '/signup'].includes(locationHref)) {
+        const locationPath = window.location.pathname
+        if(['/login', '/signup'].includes(locationPath)) {
             window.location.href = "/"
         }
     }
     else {
         removeLocalUser()
         saveLocalUser(response.user, response.token)
-        const locationHref = window.location.href
-        if(!['/login', '/signup'].includes(locationHref)) {
+        const locationPath = window.location.pathname
+        if(!['/login', '/signup'].includes(locationPath)) {
             window.location.href = "/login"
         }
     }

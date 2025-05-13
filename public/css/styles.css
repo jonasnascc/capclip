@@ -69,28 +69,6 @@ body {
     gap: .5vw;
 }
 
-.code_input_div {
-    display: flex;
-    align-items: center;
-    gap: 1vw;
-}
-
-.code_input_div label {
-    color: white;
-}
-
-#code {
-    all: unset;
-    box-sizing: border-box;
-    background-color: white;
-    width: 11.80vw;
-    height: 100%;
-    min-width: 160px;
-    font-size: 16px;
-    padding: .5vw;
-    max-width: 160px;
-}
-
 #submit_button, #msg_popup_button {
     all: unset;
     cursor: pointer;
@@ -116,7 +94,7 @@ textarea {
     font-size: 16px;
 }
 
-.videoPlayer , #player_bar, #video_preview, #code{
+.videoPlayer , #player_bar, #video_preview {
     border-radius: 10px;
 }
 
