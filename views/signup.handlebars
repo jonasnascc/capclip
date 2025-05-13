@@ -1,0 +1,30 @@
+<form id="signupForm">
+    <h1>Cadastro</h1>
+    <div id="auth_form_control">
+        <label for="login">Login: </label>
+        <input
+            type="text"
+            name="login"
+            id="login"
+            required
+        />
+    </div>
+    <div id="auth_form_control">
+        <label for="password">Senha: </label>
+        <input
+            type="password"
+            name="password"
+            id="password"
+            required
+        />
+    </div>
+    <button type="submit">Cadastrar</button>
+    <p>Não possui uma conta? <a href="/signup">Cadastre-se</a></p>
+</form>
+
+
+<form id="tokenConfirmForm">
+    <div>Por favor, envie uma mensagem para o Bot com o seguinte conteúdo: </div>
+    <input id="token_value" name="token" readonly/>
+    <button id="signupBtn" type="submit">Confirmar</button>
+</form>

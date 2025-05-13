@@ -1,0 +1,132 @@
+const signupForm = document.getElementById("signupForm")
+const loginForm = document.getElementById("loginForm")
+const tokenForm = document.getElementById("tokenConfirmForm")
+const tokenInput = document.getElementById("token_value")
+
+if(signupForm) signupForm.addEventListener("submit", async (e) => {
+    e.preventDefault()
+
+    const formData = new FormData(signupForm);
+    const login = formData.get('login');
+    const password = formData.get('password');
+
+    let response = null;
+    await fetch("/auth/signup", {
+        method:"POST", 
+        body: JSON.stringify({ login, password }),
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    }).then((resp) => {
+            if(!resp.ok) throw new Error("Could not register user!")
+            return resp.json()
+    })
+    .then((data) => response = data)
+    .catch((err) => console.error(err))
+
+    if(response) {
+        tokenInput.value = response.token.trim()
+    }
+})
+
+if(loginForm) loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault()
+
+    const formData = new FormData(loginForm);
+    const login = formData.get('login');
+    const password = formData.get('password');
+
+    let response = null;
+    await fetch("/auth/login", {
+        method:"POST", 
+        body: JSON.stringify({ login, password }),
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    }).then((resp) => {
+            if(!resp.ok) throw new Error("Could not authenticate user!")
+            return resp.json()
+    })
+    .then((data) => response = data)
+    .catch((err) => console.error(err))
+
+    if(response){
+        saveLocalUser(response.user, response.token)
+        window.location.href = "/"
+    }
+})
+
+if(tokenForm) tokenForm.addEventListener("submit", async (e) => {
+    e.preventDefault()
+
+    const token = tokenInput.value
+
+    await verifyUser(token)
+})
+
+const saveLocalUser = (user, token) => {
+    localStorage.setItem("token", JSON.stringify(token))
+    localStorage.setItem("user", JSON.stringify(user))
+}
+
+const removeLocalUser = () => {
+    localStorage.removeItem("token")
+    localStorage.removeItem("user")
+}
+
+
+const verifyUser = async (token) => {
+    let response = null;
+    await fetch("/token/confirm", {
+            method:"POST", 
+            body: JSON.stringify({token}),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+    }).then((resp) => {
+            if(!resp.ok) throw new Error("Could not confirm token!")
+            return resp.json()
+    })
+    .then((data) => response = data)
+    .catch((err) => console.error(err))
+
+    if(response) {
+        saveLocalUser(response.user, response.token)
+        const locationHref = window.location.href
+        console.log(locationHref)
+        if(['/login', '/signup'].includes(locationHref)) {
+            window.location.href = "/"
+        }
+    }
+    else {
+        removeLocalUser()
+        saveLocalUser(response.user, response.token)
+        const locationHref = window.location.href
+        if(!['/login', '/signup'].includes(locationHref)) {
+            window.location.href = "/login"
+        }
+    }
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+    const logoutBtn = document.getElementById("logoutBtn")
+    const json = localStorage.getItem("token")
+    
+    if(json) {
+        const token = JSON.parse(json)
+        await verifyUser(token)
+    }
+
+    if(logoutBtn) {
+        logoutBtn.addEventListener("click", async () => {
+            await fetch("/auth/logout", {method:"POST"}).then((resp) => {
+                if(!resp.ok) throw new Error("Could not logout user!")
+                else {
+                    removeLocalUser()
+                    window.location.href = "/login"
+                }
+            })
+            .catch((err) => console.error(err))
+        })
+    }
+})

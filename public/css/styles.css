@@ -176,3 +176,32 @@ textarea {
     width: calc(63.5vh * 16 / 9 * 0.12);
     z-index: 5;
 }
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.headerContainer {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+
+    width: calc(63.5vh * 16/9);
+}
+
+#logoutBtn {
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 1vw;
+    background-color: #c40000;
+    color: white;
+    border-radius: 10px;
+    height: 40px;
+    font-weight: 500;
+    cursor: pointer;
+}
