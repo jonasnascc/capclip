@@ -32,20 +32,18 @@ O self bot é responsável por realizar login no Discord, acessar o servidor e c
 
 ## 🔐 Autenticação de Usuário
 
-A autenticação é feita por meio de **códigos únicos atribuídos** a cada usuário, e configurados manualmente por um administrador autorizado.
+A autenticação foi projetada para ser simples e segura, garantindo que apenas usuários autorizados possam enviar clipes por meio do self bot.
 
 ### Como funciona:
 
-1. O administrador envia uma mensagem privada ao self bot com o seguinte comando:
+1. **Clique em “Cadastrar-se”** na página inicial.
+2. **Crie um nome de usuário e uma senha**, e clique em **“CADASTRAR”**.
+3. Um **código exclusivo será gerado** para você.
+4. **Copie esse código**.
+5. **Envie o código em uma mensagem privada** para o bot chamado **CAP Clipador**, presente no servidor do Discord.
+6. Após isso, volte à aplicação e clique em **“Confirmar”** para finalizar a autenticação.
 
-```
-adduser <Id do usuário> <Código atribuído>
-```
-
-
-2. Ao utilizar a aplicação, o usuário informa seu código.
-
-3. O self bot verifica a associação do código com o ID do usuário, garantindo a autoria do clipe enviado.
+> ✅ Essa verificação garante que somente usuários previamente autenticados possam utilizar o envio de clipes via o bot.
 
 ---
 
