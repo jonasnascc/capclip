@@ -65,11 +65,11 @@ app.get("/sentConfirm", requireAuth, (req, res) => {
 })
 
 app.get("/login", requireNoAuth, (req, res) => {
-    res.render("login")
+    res.render("login", {authPage: true})
 })
 
 app.get("/signup", requireNoAuth, (req, res) => {
-    res.render("signup")
+    res.render("signup", {authPage: true})
 })
 
 app.post('/upload', requireAuth, upload.single('video_file'), async (req, res) => {
