@@ -10,11 +10,12 @@ if(signupForm) signupForm.addEventListener("submit", async (e) => {
     const formData = new FormData(signupForm);
     const login = formData.get('login');
     const password = formData.get('password');
+    const passwordConfirm = formData.get('passwordConfirm');
 
     let response = null;
     await fetch("/auth/signup", {
         method:"POST", 
-        body: JSON.stringify({ login, password }),
+        body: JSON.stringify({ login, password, passwordConfirm }),
         headers: {
             'Content-Type': 'application/json'
         },

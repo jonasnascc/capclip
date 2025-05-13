@@ -126,10 +126,12 @@ app.post("/auth/login", requireNoAuth, async (req, res) => {
 })
 
 app.post("/auth/signup", requireNoAuth, async (req, res) => {
-    const{login, password} = req.body
+    const{login, password, passwordConfirm} = req.body
 
     if(!login) return res.status(422).send({message: "Field login can't be null"})
     if(!password) return res.status(422).send({message: "Field password can't be null"})
+    if(!passwordConfirm) return res.status(422).send({message: "Field passwordConfirm can't be null"})
+    if(password !== passwordConfirm) return res.status(422).send({message: "Password and passwordConfirm does not match."})
     else if(password.length < 8)  return res.status(422).send({message: "Password length must be more than 8 characters"})
 
     const hash = generateUserHash(login, password)
