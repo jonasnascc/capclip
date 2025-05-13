@@ -22,8 +22,6 @@ const findUserByDMHash = async (hash, client) => {
                     return msg.author.id
                 }
             }
-
-            console.log('---------------------');
         } catch (err) {
             console.error(`Erro ao buscar mensagens da DM ${id}:`, err.message);
         }
